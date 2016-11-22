@@ -1,9 +1,11 @@
 #todo {
+  position: relative;
   display: block;
   width: 90%;
   height: 30px;
-  padding: 16px 16px 16px 60px;
-  /*border: none;*/
-  /*background: rgba(0, 0, 0, 0.003);*/
-  box-shadow: inset 0 -2px 1px rgba(0,0,0,0.03);
+  padding-left: 20px;
+  font-size: 18px;
+}
+#todo-button {
+
 }
