@@ -9,6 +9,7 @@
 }
 #todo-button {
   display: block;
+  width: 6%;
   height: 36px;
   vertical-align: middle;
   text-align: center;
@@ -19,17 +20,25 @@
   top: 0;
   display: block;
   width: 100%;
-  height: 36px;
+  /*height: 36px;*/
   margin: 0;
   font-size: 18px;
 }
 .todo-toogle ul {
   list-style-type: none;
   display: inherit;
-  height: 36px;
+  /*height: 36px;*/
   margin: 0;
-  padding: 7px;
+  padding: 0;
 }
-.view input, .view button, .view label {
+.todo-toogle ul li{
+  padding: 10px;
+  border: 1px solid rgb(238, 238, 238);
+}
+.view input, .view label {
   margin-right: 50px;
+}
+.view input[type='button'] {
+  float: right;
+  margin-right: 3px;
 }
