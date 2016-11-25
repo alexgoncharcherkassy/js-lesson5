@@ -42,3 +42,7 @@
   float: right;
   margin-right: 3px;
 }
+.selected-label {
+  text-decoration: line-through;
+  color: #cccccc;
+}

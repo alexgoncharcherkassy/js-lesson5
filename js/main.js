@@ -4,6 +4,7 @@ var Item = {
     id: '',
     field: '',
     status: false,
+
     setId: function (id) {
         this.id = id;
     },
@@ -35,14 +36,17 @@ todo.addEventListener("keyup", function (event) {
 
 todoButton.addEventListener("click", function (event) {
     event.preventDefault();
-    item = Object.create(Item);
-    item.setId(id++);
-    item.setField(todo.value);
-    item.setStatus(false);
-    items.push(item);
-    todo.value = '';
-    createItem(item);
-    console.log(items);
+
+    if (todo.value !== '') {
+        item = Object.create(Item);
+        item.setId(id++);
+        item.setField(todo.value);
+        item.setStatus(false);
+        items.push(item);
+        todo.value = '';
+        createItem(item);
+        console.log(items);
+    }
 });
 
 function createRenderDiv() {
@@ -69,6 +73,7 @@ function createItem(item) {
     div.setAttribute('id', item.getId());
     var checkbox = document.createElement('input');
     checkbox.setAttribute('type', 'checkbox');
+    checkbox.setAttribute('class', 'select-input');
     var label = document.createElement('label');
     label.innerHTML = item.getField();
     var btn = document.createElement('input');
@@ -79,72 +84,78 @@ function createItem(item) {
     div.appendChild(label);
     div.appendChild(btn);
     li.appendChild(div);
-    btn.setAttribute("onClick", remove);
+    btn.addEventListener("click", remove, false);
+    checkbox.addEventListener("change", select, false);
 
     ul.appendChild(li);
 }
 
+function remove(elem) {
+    var parent = elem.target.parentNode;
+    ind = items.findIndex(function (el) {
+        if (parent.id == el.getId()) {
+            return true;
+        }
 
-
-
-
-
-
-function renderItems(id) {
-    if (items.length > 0) {
-        // if (!document.getElementById('toogle')) {
-            var toogle = document.createElement('div');
-            toogle.setAttribute('id', 'toogle');
-            toogle.setAttribute('class', 'todo-toogle');
-            var ul = document.createElement('ul');
-
-
-            document.getElementById("todo-section").insertBefore(toogle, null);
-            toogle.appendChild(ul);
-        // } else {
-        //     toogle = document.getElementById('toogle');
-        //     ul = toogle.children[0];
-        //     console.log(ul);
-        // }
-            console.log(ul);
-
-        items.forEach(function (val, ind, arr) {
-            var li = document.createElement('li');
-            var div = document.createElement('div');
-            div.setAttribute('class', 'view');
-            div.setAttribute('id', val.getId());
-            var checkbox = document.createElement('input');
-            checkbox.setAttribute('type', 'checkbox');
-            var label = document.createElement('label');
-            label.innerHTML = val.getField();
-            var btn = document.createElement('input');
-            btn.setAttribute('type', 'button');
-            btn.setAttribute('class', 'btn-remove');
-            // btn.setAttribute('id', val.getId());
-            btn.setAttribute('value', 'x');
-            div.appendChild(checkbox);
-            div.appendChild(label);
-            div.appendChild(btn);
-            li.appendChild(div);
-
-            ul.appendChild(li);
-
-            // btn.setAttribute('onClick', remove);
-
-            console.log(li);
-        });
-
+        return false;
+    });
+    items.splice(ind, 1);
+    parent.parentNode.remove();
+    var amountDiv = document.getElementById('amount-div');
+    if (items.length === 0 && amountDiv) {
+        amountDiv.remove();
     }
 }
-function remove() {
-    // items.splice(id, 1);
-    // renderItems();
-    // var parent = div.parentNode;
-    // div.remove();
-    console.log(this);
+
+function select(elem) {
+    var nextSibling = elem.target.nextSibling;
+
+    if (elem.target.checked) {
+        nextSibling.setAttribute('class', 'selected-label');
+        setStatus(elem, true);
+    } else {
+        nextSibling.setAttribute('class', '');
+        setStatus(elem, false);
+    }
 }
-// var removes = document.getElementsByClassName('btn-remove');
-// removes.forEach(function (val, ind) {
-//
-// });
-// console.log(removes);
+
+function setStatus(elem, status) {
+    var id = elem.target.parentNode.id;
+    ind = items.findIndex(function (el) {
+        if (id == el.getId()) {
+            return true;
+        }
+
+        return false;
+    });
+    var obj = items[ind];
+    obj.setStatus(status);
+    renderAmount();
+}
+
+
+function renderAmount() {
+    amountDiv = document.getElementById('amount-div');
+
+    if (!amountDiv) {
+        var toogle = document.getElementById('toogle');
+        var amountDiv = document.createElement('div');
+        amountDiv.setAttribute('class', 'todo-toogle');
+        amountDiv.setAttribute('id', 'amount-div');
+        toogle.parentNode.appendChild(amountDiv);
+    }
+
+    amountDiv.innerHTML = 'Selected number: ' + countSelected();
+}
+
+function countSelected() {
+    var count = 0;
+    items.forEach(function (elem) {
+        if (elem.status == true) {
+            count++;
+        }
+    });
+
+    return count;
+}
+
