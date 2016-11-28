@@ -26,6 +26,15 @@ var Item = {
 };
 var items = [];
 var id = 0;
+var myStorage = localStorage;
+
+function saveToStorage(items) {
+    myStorage.setItem('storage', JSON.stringify(items));
+}
+
+function getFromStorage() {
+    return JSON.parse(myStorage.getItem('storage'));
+}
 
 todo.addEventListener("keyup", function (event) {
     event.preventDefault();
@@ -45,7 +54,7 @@ todoButton.addEventListener("click", function (event) {
         items.push(item);
         todo.value = '';
         createItem(item);
-        console.log(items);
+        saveToStorage(items);
     }
 });
 
@@ -105,6 +114,7 @@ function remove(elem) {
     if (items.length === 0 && amountDiv) {
         amountDiv.remove();
     }
+    saveToStorage(items);
 }
 
 function select(elem) {
@@ -130,6 +140,7 @@ function setStatus(elem, status) {
     });
     var obj = items[ind];
     obj.setStatus(status);
+    saveToStorage(items);
     renderAmount();
 }
 
@@ -159,3 +170,14 @@ function countSelected() {
     return count;
 }
 
+function renderFromStorage() {
+    items = getFromStorage();
+    console.log(items);
+    if (items) {
+        items.forEach(function (val) {
+            console.log(val);
+            createItem(val);
+        });
+    }
+}
+renderFromStorage();
