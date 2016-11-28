@@ -1,28 +1,9 @@
 var todo = document.getElementById("todo");
 var todoButton = document.getElementById("todo-button");
 var Item = {
-    id: '',
-    field: '',
-    status: false,
-
-    setId: function (id) {
-        this.id = id;
-    },
-    getId: function () {
-        return this.id;
-    },
-    setField: function (field) {
-        this.field = field;
-    },
-    setStatus: function (status) {
-        this.status = status;
-    },
-    getField: function () {
-        return this.field;
-    },
-    getStatus: function () {
-        return this.status;
-    }
+    id: String,
+    field: String,
+    status: Boolean
 };
 var items = [];
 var id = 0;
@@ -33,7 +14,8 @@ function saveToStorage(items) {
 }
 
 function getFromStorage() {
-    return JSON.parse(myStorage.getItem('storage'));
+    items = JSON.parse(myStorage.getItem('storage'));
+    return items;
 }
 
 todo.addEventListener("keyup", function (event) {
@@ -48,9 +30,9 @@ todoButton.addEventListener("click", function (event) {
 
     if (todo.value !== '') {
         item = Object.create(Item);
-        item.setId(id++);
-        item.setField(todo.value);
-        item.setStatus(false);
+        item.id = Date.now();
+        item.field = todo.value;
+        item.status = false;
         items.push(item);
         todo.value = '';
         createItem(item);
@@ -79,12 +61,15 @@ function createItem(item) {
     var li = document.createElement('li');
     var div = document.createElement('div');
     div.setAttribute('class', 'view');
-    div.setAttribute('id', item.getId());
+    div.setAttribute('id', item.id);
     var checkbox = document.createElement('input');
     checkbox.setAttribute('type', 'checkbox');
     checkbox.setAttribute('class', 'select-input');
+    if (item.status) {
+        checkbox.setAttribute('checked', true);
+    }
     var label = document.createElement('label');
-    label.innerHTML = item.getField();
+    label.innerHTML = item.field;
     var btn = document.createElement('input');
     btn.setAttribute('type', 'button');
     btn.setAttribute('class', 'btn-remove');
@@ -102,7 +87,7 @@ function createItem(item) {
 function remove(elem) {
     var parent = elem.target.parentNode;
     ind = items.findIndex(function (el) {
-        if (parent.id == el.getId()) {
+        if (parent.id == el.id) {
             return true;
         }
 
@@ -114,6 +99,7 @@ function remove(elem) {
     if (items.length === 0 && amountDiv) {
         amountDiv.remove();
     }
+    renderAmount();
     saveToStorage(items);
 }
 
@@ -132,37 +118,43 @@ function select(elem) {
 function setStatus(elem, status) {
     var id = elem.target.parentNode.id;
     ind = items.findIndex(function (el) {
-        if (id == el.getId()) {
+        if (id == el.id) {
             return true;
         }
 
         return false;
     });
     var obj = items[ind];
-    obj.setStatus(status);
+    obj.status = status;
     saveToStorage(items);
     renderAmount();
 }
 
 
 function renderAmount() {
+    var count = countSelected();
     amountDiv = document.getElementById('amount-div');
 
-    if (!amountDiv) {
-        var toogle = document.getElementById('toogle');
-        var amountDiv = document.createElement('div');
-        amountDiv.setAttribute('class', 'todo-toogle');
-        amountDiv.setAttribute('id', 'amount-div');
-        toogle.parentNode.appendChild(amountDiv);
-    }
+    if (count) {
+        if (!amountDiv) {
+            var toogle = document.getElementById('toogle');
+            var amountDiv = document.createElement('div');
+            amountDiv.setAttribute('class', 'todo-toogle');
+            amountDiv.setAttribute('id', 'amount-div');
+            toogle.parentNode.appendChild(amountDiv);
+        }
 
-    amountDiv.innerHTML = 'Selected number: ' + countSelected();
+        amountDiv.innerHTML = 'Selected number: ' + count;
+    }
+    if (!count && amountDiv) {
+        amountDiv.remove();
+    }
 }
 
 function countSelected() {
     var count = 0;
     items.forEach(function (elem) {
-        if (elem.status == true) {
+        if (elem.status) {
             count++;
         }
     });
@@ -178,6 +170,7 @@ function renderFromStorage() {
             console.log(val);
             createItem(val);
         });
+        renderAmount();
     }
 }
 renderFromStorage();
