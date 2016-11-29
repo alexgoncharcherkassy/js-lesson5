@@ -15,7 +15,7 @@ function saveToStorage(items) {
 
 function getFromStorage() {
     items = JSON.parse(myStorage.getItem('storage'));
-    return items;
+    return items ? items : [];
 }
 
 todo.addEventListener("keyup", function (event) {
