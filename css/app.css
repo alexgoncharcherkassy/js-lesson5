@@ -65,3 +65,8 @@
   top: 3px;
   right: 10px;
 }
+button, input[type=button] {
+  color: #b8c3bf;
+  cursor: pointer;
+  display: none;
+}

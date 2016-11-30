@@ -173,4 +173,17 @@ function renderFromStorage() {
         renderAmount();
     }
 }
+
 renderFromStorage();
+document.getElementById('todo-section').addEventListener('mouseover', function (event) {
+    if (event.target.lastChild) {
+        event.target.lastChild.style.display = 'block';
+    }
+});
+document.getElementById('todo-section').addEventListener('mouseout', function (event) {
+    if (div = event.target.lastChild) {
+        if (div.lastChild) {
+            div.lastChild.style.display = 'none';
+        }
+    }
+});
